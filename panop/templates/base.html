@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load staticfiles %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Panop</title>
+
+    <!--<link rel="shortcut icon" href="{% static 'echo/img/Picon.ico' %}"/>-->
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'common/bootswatch/3.0.0/cerulean/bootstrap.min.css' %}"
+    {# <link href="{% static 'common/css/cxm-bootstrap.css' %}"  #}
+          rel="stylesheet">
+    <link href="{% static 'common/bootstrap-select/1.7.2/dist/css/bootstrap-select.min.css' %}"
+          rel="stylesheet">
+    <link href="{% static 'common/font-awesome/4.1.0/css/font-awesome.min.css' %}"
+          rel="stylesheet">
+
+    <!--<link rel="stylesheet" type="text/css" href="{% static 'echo/core/core.css' %}"/>-->
+    <script type='text/javascript' src="{% static 'common/jquery/2.0.3/jquery.min.js' %}"></script>
+
+    <script type="text/javascript">
+        {% include 'timer.js' %}
+    </script>
+
+    {% block headscript %}{% endblock %}
+
+</head>
+<body>
+{% include 'header.html' %}
+<div id="wrapper">
+    <div id="content">
+        <br><br><br>
+        {% if messages %}
+            <div id="messages" class="container">
+                {% for message in messages %}
+                    <div class="alert alert-dismissable alert-{{ message.tags }}">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        {{ message | safe }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div id="monitor_id">
+           {% block content %}{% endblock %}
+        </div>
+    </div>
+    <div class="push"></div>
+</div>
+
+<p></p>
+<div style="position:fixed; width:100%; bottom:0;">
+{% include 'footer.html' %}
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+
+<script type='text/javascript' src="{% static 'common/bootstrap/3.0.0/dist/js/bootstrap.min.js' %}"></script>
+<script type='text/javascript' src="{% static 'common/bootstrap-select/1.7.2/dist/js/bootstrap-select.min.js' %}"></script>
+
+{% block endscript %}{% endblock %}
+
+</body>
+</html>

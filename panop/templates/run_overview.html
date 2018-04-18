@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block headscript %}
+<script>
+    $(function() {
+        ajaxPoll()
+        setInterval('ajaxPoll()', 6000)
+    })
+    function checkCampaignCentral(row) {
+        $.ajax("{% url 'cc_summary' test_run.pk %}", {data: {'row': row}})
+                .success(updateCampaignCentralField)
+    }
+    function updateCampaignCentralField(data, textStatus, jqXHR){
+        $('tr[data-row='+data.row+'] td[data-key="Campaign Central"]').text(data.field)
+    }
+    function checkSFTP() {
+        $.ajax("{% url 'sftp_check' test_run.pk %}").success(updateSFTPField)
+    }
+    function updateSFTPField(data, textStatus, jqXHR){
+        label = document.getElementById("sftp-load")
+        label.innerText = data.status
+        if (data.status === "Unprocessed") {
+            label.className = "label label-warning"
+        }
+        else if (data.status === "Processed"){
+            label.className = "label label-success"
+        }
+        else if (data.status === "Missing"){
+            label.className = "label label-danger"
+        }
+        else {
+            label.className = "label label-default"
+        }
+    }
+    function updateLoaderField(data, textStatus, jqXHR){
+        var thead = $("#loader-table thead")
+        thead.html("")
+        var headrow = $('<tr>')
+        $.each(data.headers, function(i, header) {
+            headrow.append($('<th>').text(header))
+        })
+        headrow.appendTo(thead)
+        var tbody = $("#loader-table tbody")
+        tbody.html("")
+        $.each(data.values, function(i, row){
+            var bodyrow = $('<tr>')
+            $.each(row, function(i, value){
+                bodyrow.append($('<td>').text(value))
+            })
+            bodyrow.appendTo(tbody)
+        })
+    }
+    function checkLoaderTable() {
+        $.ajax("{% url 'loader_check' test_run.pk %}").success(updateLoaderField)
+    }
+    function ajaxPoll(){
+        $.each($("#result-table tbody tr"), function(index, value) {checkCampaignCentral(index)})
+        checkSFTP()
+        checkLoaderTable()
+    }
+</script>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Project status</h3>
+        </div>
+        <div class="panel-body">
+            SFTP Load: <span class="label" id="sftp-load"></span><br>
+            Loader Table:
+            <table class="table table-condensed table-hover" id="loader-table">
+                <thead><tr><th>Waiting for response</th></tr></thead>
+                <tbody><tr><td> </td></tr></tbody>
+            </table>
+        </div>
+    </div>
+    <table class="table" id="result-table">
+        <thead>
+            <tr>
+                <th>Data Key</th>
+                <th>Campaign Central</th>
+                <th>MCN</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in test_run.get_data_file_rows %}
+            <tr data-row="{{ forloop.counter0 }}">
+                <td data-key="Data Key">{{ row }}</td>
+                <td data-key="Campaign Central"></td>
+                <td data-key="MCN"></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

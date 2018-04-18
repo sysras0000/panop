@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block headscript %}
+<style>
+    #runs {
+        height: 100%;
+        border-right: 1px solid lightsteelblue;
+    }
+    #runs ul {
+        list-style: none;
+        padding: 0;
+    }
+    hr {
+        border-top: 1px solid lightsteelblue;
+        margin-right: 2em;
+    }
+    html {
+        overflow-x: hidden;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3 col-xs-12 col-md-offset-1" id="runs">
+            <h1>Recent Runs</h1>
+            <ul>
+            {% for run in runs %}
+                <li><a href="{% url 'run_overview' run.pk %}">{{ run.data_file.name }}: {{ run.start|date:"SHORT_DATETIME_FORMAT" }}</a>
+                (<a href="{% url 'download_log' run.pk%}">Log</a>)</li>
+            {% endfor %}
+            </ul>
+            <a href="#">View All</a> <!-- TODO: View all runs -->
+        </div>
+        <div class="col-md-8 col-xs-12">
+            <form action="{% url 'start' %}" method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6 col-xs-12" id="ini-list">
+                        <h1>Campaign Configs</h1>
+                        <ul id="id_campaign">
+                        {% for value, label in run_form.fields.campaign.choices %}
+                            {% if not forloop.first %}
+                            <li>
+                                <label for="id_campaign_{{ x }}">
+                                    <input type="radio" name="campaign" value="{{ value }}"> {{ label }}
+                                    (<a href="{% url 'download_config' value %}">Download</a>)
+                                </label>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-md-6 col-xs-12" id="data-list">
+                        <h1>Data Files</h1>
+                        <ul id="id_data_file">
+                        {% for value, label in run_form.fields.data_file.choices %}
+                            {% if not forloop.first %}
+                            <li>
+                                <label for="id_data_file_{{ x }}">
+                                    <input type="radio" name="data_file" value="{{ value }}"> {{ label }}
+                                    (<a href="{% url 'download_batch' value %}">Download</a>)
+                                </label>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input id="submit_btn_" type="submit" class="btn btn-primary" value="Run">
+                    </div>
+                </div>
+            </form>
+            <hr>
+            <div class="row" id="uploads">
+                <form action="{% url 'upload_config' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="col-xs-6">
+                        <h3>New config</h3>
+                        <table>{{ config_form.as_table }}</table>
+                        <input type="submit">
+                    </div>
+                </form>
+                <form action="{% url 'upload_batch' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="col-xs-6">
+                        <h3>New data file</h3>
+                        <table>{{ data_form.as_table }}</table>
+                        <input type="submit">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

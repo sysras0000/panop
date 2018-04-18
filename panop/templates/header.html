@@ -1,0 +1,15 @@
+{% block header %}
+    <header id="navbar" class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{% url 'home' %}">Panop</a>
+        </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="{% url 'help' %}"><i class="fa fa-thumbs-o-up fa-fw"></i>&nbsp;Help</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="{% url 'admin:index' %}"><i class="fa fa-cog fa-fw"></i>&nbsp;Settings</a></li>
+                </ul>
+            </div>
+    </header>
+{% endblock %}

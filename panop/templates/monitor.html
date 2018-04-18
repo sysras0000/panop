@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>Campaign Table</h1>
+            <table id="campaign_table" class="table">
+                <thead id="table_header">
+                    <tr>
+                        {% for h in campaign_table_headers %}
+                        <th>{{ h }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody id="table_data">
+                    {% for item in polled_data %}
+                    <tr>
+                        {% for column in item %}
+                            <td>{{ column }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <br>
+            <div id="error_div" style="text-align:center;">
+                <br>
+                <h4>Error Polling Database</h4>
+                <br>
+            </div>
+            <br>
+            <div style="text-align:center;">
+                <br>
+                <div id="count_display"></div>
+                <br>
+                <div id="display_results_div" class="row">
+                    <input id="display_results_btn" type="button" class="btn btn-default" onclick="display_logging_results()" value="Display Results">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block endscript %}
+
+    <script type="text/javascript">
+
+        var columns_list_str = '{{ show_columns_list | safe }}';
+
+        $(document).ready(function() {
+
+            add_ids_to_table();
+
+            hide_columns(false);
+
+            $("#display_results_div").hide();
+
+            current_state = '{{ state | safe }}';
+
+            process_state();
+
+        });
+
+    </script>
+
+{% endblock %}
